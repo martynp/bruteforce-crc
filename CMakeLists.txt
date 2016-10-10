@@ -32,9 +32,9 @@ set(BRUTEFORCE_CRC_CMD bruteforce-crc.cc)
 add_executable(bruteforce-crc ${BRUTEFORCE_CRC_CMD})
 target_link_libraries(bruteforce-crc ${LIBS})
 
-set(GENERATE_TEST_DATA_CMD generate-test-data.cc)
-add_executable(generate-test-data ${GENERATE_TEST_DATA_CMD})
-target_link_libraries(generate-test-data ${LIBS})
+#set(GENERATE_TEST_DATA_CMD generate-test-data.cc)
+#add_executable(generate-test-data ${GENERATE_TEST_DATA_CMD})
+#target_link_libraries(generate-test-data ${LIBS})
 
 # To process brute forcer stolen from http://neyasystems.com/an-engineers-guide-to-unit-testing-cmake-and-boost-unit-tests/
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} tests/*.cc)
