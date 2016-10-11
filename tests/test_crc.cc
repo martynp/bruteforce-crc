@@ -600,8 +600,6 @@ BOOST_AUTO_TEST_CASE(crcTen) {
 	uint8_t crc_width = 10;
 	uint32_t calculated_crc;
 
-	crc_t crc(crc_width);
-
 	/*
 	 * CRC-10
 	 * width=10 poly=0x233 init=0x000 refin=false refout=false xorout=0x000 check=0x199 name="CRC-10"

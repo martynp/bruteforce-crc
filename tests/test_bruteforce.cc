@@ -20,36 +20,31 @@
 #include "../crc.hpp"
 #include "../bf_crc.hpp"
 
-#define CRCFOURTEEN
-#define CRCSIZTEEN
-#define CRCTHIRTYTWO
+//#define CRCFOURTEEN
+//#define CRCSIXTEEN
+//#define CRCTHIRTYTWO
 
 char getRandomChar(){
     static char c = 'A' + rand()%24;
     return c;    
 }
 
-uint32_t calculate_crc(uint32_t crc_width, uint8_t data[], size_t length, bf_crc::crc_model_t model)
-{
-	bf_crc::crc_t crc(crc_width);
-	boost::dynamic_bitset<> msg = bf_crc::convert_uint8_to_bitset(data, length);
 
-	crc.set(model.polynomial, model.initial, model.final_xor, model.reflected_input, model.reflected_output);
-	crc.calc_crc(model.initial, msg);
-	
-	return crc.checksum();
+uint32_t calculate_crc(uint32_t width, const uint8_t* data, size_t length, bf_crc::crc_model_t model)
+{
+
 }
 
-uint32_t calculate_crc(uint32_t crc_width, uint8_t data[], size_t length, bf_crc::crc_model_t model, boost::dynamic_bitset<> *msg)
+uint32_t calculate_crc(uint32_t width, const uint8_t* data, size_t length, uint32_t polynomial, uint32_t initial, uint32_t final_xor, bool reflected_input, bool reflected_output)
 {
-	bf_crc::crc_t crc(crc_width);
-	
-	*msg = bf_crc::convert_uint8_to_bitset(data, length);
 
-	crc.set(model.polynomial, model.initial, model.final_xor, model.reflected_input, model.reflected_output);
-	crc.calc_crc(model.initial, *msg);
-	
-	return crc.checksum();
+	crc crc(width);
+	crc.set_parameters(polynomial, initial, final_xor, reflected_input, reflected_output);
+	crc.set_data(data, length, 0, true);
+	crc.calculate_crc();
+
+	return crc.result();
+
 }
 
 #ifdef CRCFOURTEEN
@@ -58,14 +53,12 @@ BOOST_AUTO_TEST_CASE(crcFourteen)
 	// 14 bit CRC's
 	bf_crc *crc_bruteforce;
 	uint16_t crc_width = 14;
-	bf_crc::crc_t crc(crc_width);
-	boost::dynamic_bitset<> msg;
 
 	// Lets make sure things are random
 	srand((unsigned)time(0));
 
 	std::vector<bf_crc::test_vector_t> test_vectors;
-	bf_crc::test_vector_t test_vector;
+	crc::data_t test_vector;
 
 	/*
 	 * CRC-14/DARC
@@ -76,8 +69,8 @@ BOOST_AUTO_TEST_CASE(crcFourteen)
 
 	// REVENG Check
 	uint8_t data_0[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39}; 
-	test_vector.crc = calculate_crc(crc_width, data_0, sizeof(data_0), model, (boost::dynamic_bitset<>*)&msg);
-	test_vector.message = msg;
+	test_vector.crc = calculate_crc(crc_width, data_0, sizeof(data_0), model;
+	test_vector.unused_bits = 0;
 	test_vectors.push_back(test_vector);
 
 	// Check the CRC engine is still working...
@@ -130,7 +123,6 @@ BOOST_AUTO_TEST_CASE(crcSixteen)
 	// 16 bit CRC's
 	bf_crc *crc_bruteforce;
 	uint16_t crc_width = 16;
-	bf_crc::crc_t crc(crc_width);
 	boost::dynamic_bitset<> msg;
 
 	// Lets make sure things are random
@@ -203,7 +195,6 @@ BOOST_AUTO_TEST_CASE(crcThirtyTwo)
 	// 32 bit CRC's
 	bf_crc *crc_bruteforce;
 	uint16_t crc_width = 32;
-	bf_crc::crc_t crc(crc_width);
 	boost::dynamic_bitset<> msg;
 
 	// Lets make sure things are random
