@@ -20,6 +20,8 @@
 #include "../crc.hpp"
 #include "../bf_crc.hpp"
 
+#define CRCFOURTEEN
+#define CRCSIZTEEN
 #define CRCTHIRTYTWO
 
 char getRandomChar(){
@@ -70,7 +72,7 @@ BOOST_AUTO_TEST_CASE(crcFourteen)
 	 * width=14 poly=0x0805 init=0x0000 refin=true refout=true xorout=0x0000 check=0x082d name="CRC-14/DARC"
 	 */
 
-	bf_crc::crc_model_t model = {0x0805, 0x0000, 0x0000, true, true};
+	bf_crc::crc_model_t model(0x0805, 0x0000, 0x0000, true, true);
 
 	// REVENG Check
 	uint8_t data_0[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39}; 
@@ -143,7 +145,7 @@ BOOST_AUTO_TEST_CASE(crcSixteen)
 	 */
 
 	// Model of the CRC to brute force
-	bf_crc::crc_model_t model = {0x1021, 0xFFFF, 0x0000, false, false};
+	bf_crc::crc_model_t model(0x1021, 0xFFFF, 0x0000, false, false);
 
 	// REVENG Check
 	uint8_t data_0[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39}; 
@@ -250,6 +252,8 @@ BOOST_AUTO_TEST_CASE(crcThirtyTwo)
 								false, 		// Probe Reflected Input?
 								false);		// Probe Reflected Output?
 	crc_bruteforce->set_verbose(true);
+	crc_bruteforce->set_polynomial_start(0x00000000);
+	crc_bruteforce->set_polynomial_end(0x10000000);
 	crc_bruteforce->do_brute_force(4, test_vectors);
 
 	// Get results
