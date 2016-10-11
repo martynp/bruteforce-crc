@@ -185,7 +185,7 @@ bool bf_crc::brute_force(uint32_t search_poly_start, uint32_t search_poly_end, s
 	// Otherwise the returned list is going to take up a LOT of RAM
 	assert(test_vectors.size() > 0);
 
-	crc_t crc(crc_width_);
+//	crc_t crc(crc_width_);
 
 	// Initial value defaults to 0
 	uint32_t init = 0;
@@ -211,7 +211,7 @@ bool bf_crc::brute_force(uint32_t search_poly_start, uint32_t search_poly_end, s
 						final_xor++) {
 
 					// Set the CRC engine settings (initial set to zero, igored)
-					crc.set(poly, 0, final_xor, int_to_bool(probe_reflected_input), int_to_bool(probe_reflected_output));
+//					crc.set(poly, 0, final_xor, int_to_bool(probe_reflected_input), int_to_bool(probe_reflected_output));
 
 					// For all possible initials
 					for(init = (probe_initial_ ? 0 : initial_); 
@@ -224,7 +224,10 @@ bool bf_crc::brute_force(uint32_t search_poly_start, uint32_t search_poly_end, s
 
 						// Over all test vectirs, test to see if CRC settings work
 						for(m_i = 0; match && (m_i < test_vectors.size()); m_i++)
-							match = crc.calc_crc(init, test_vectors[m_i].message, test_vectors[m_i].crc);
+						{
+//							match = crc.calc_crc(init, test_vectors[m_i].message, test_vectors[m_i].crc);
+							match = false;
+						}
 
 						// If match is true there were no errors
 						if(match == true && m_i == test_vectors.size()) {

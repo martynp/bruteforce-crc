@@ -60,7 +60,7 @@ class bf_crc {
 			
 		} crc_model_t;
 
-		typedef my_crc_basic crc_t;
+	//	typedef my_crc_basic crc_t;
 
 		bf_crc(	uint16_t crc_width, 
 				uint32_t polynomial, 

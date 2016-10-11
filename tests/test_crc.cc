@@ -28,100 +28,29 @@ boost::timer::auto_cpu_timer t;
 // For dynamic bitset conversions only
 #include "../bf_crc.hpp"
 
-typedef my_crc_basic crc_t;
+//typedef my_crc_basic crc_t;
 uint8_t default_data[] = {0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39};
 
 uint32_t calculate_crc(uint32_t width, const uint8_t* data, size_t length, uint32_t polynomial, uint32_t initial, uint32_t final_xor, bool reflected_input, bool reflected_output)
 {
 
-#ifdef BOOST_CRC
-	if (width == 3) {
-		boost::crc_basic<3> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 4) {
-		boost::crc_basic<4> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 5) {
-		boost::crc_basic<5> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 6) {
-		boost::crc_basic<6> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 7) {
-		boost::crc_basic<7> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 8) {
-		boost::crc_basic<8> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 9) {
-		boost::crc_basic<9> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 10) {
-		boost::crc_basic<10> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 11) {
-		boost::crc_basic<11> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 12) {
-		boost::crc_basic<12> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 13) {
-		boost::crc_basic<13> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 14) {
-		boost::crc_basic<14> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 15) {
-		boost::crc_basic<15> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 16) {
-		boost::crc_basic<16> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 17) {
-		boost::crc_basic<17> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else if (width == 32) {
-		boost::crc_basic<32> crc(polynomial, initial, final_xor, reflected_input, reflected_output);
-		crc.process_bytes(data, length);
-		return crc.checksum();
-	} else {
-		assert(false);
-		return -1;
-	}
-#else
-	crc_t crc(width);
-	boost::dynamic_bitset<> msg = bf_crc::convert_uint8_to_bitset(data, length);
-		
-	crc.set(polynomial, initial, final_xor, reflected_input, reflected_output);
-	crc.calc_crc(initial, msg);
-	return crc.checksum();
-#endif
+	crc crc(width);
+	crc.set_parameters(polynomial, initial, final_xor, reflected_input, reflected_output);
+	crc.set_data(data, length, 0, true);
+	crc.calculate_crc();
+
+	return crc.result();
 
 }
 
-uint32_t calculate_crc(uint32_t crc_width, std::string data, uint32_t polynomial, uint32_t initial, uint32_t final_xor, bool reflected_input, bool reflected_output)
+uint32_t calculate_crc(uint32_t width, std::string data, uint32_t polynomial, uint32_t initial, uint32_t final_xor, bool reflected_input, bool reflected_output)
 {
-	crc_t crc(crc_width);
-	boost::dynamic_bitset<> msg = bf_crc::convert_string_to_bitset(data);
+	crc crc(width);
+	crc.set_parameters(polynomial, initial, final_xor, reflected_input, reflected_output);
+	crc.set_data(data, 0, true);
+	crc.calculate_crc();
 
-	crc.set(polynomial, initial, final_xor, reflected_input, reflected_output);
-	crc.calc_crc(initial, msg);
-	return crc.checksum();
+	return crc.result();
 }
 
 /* 
@@ -137,7 +66,6 @@ BOOST_AUTO_TEST_CASE(crcThree) {
 
 	// 3 bit CRC's
 	uint8_t crc_width = 3;
-	crc_t crc(crc_width);
 	uint32_t calculated_crc;
 
 	/*
@@ -161,7 +89,6 @@ BOOST_AUTO_TEST_CASE(crcFour) {
 
 	// 4 bit CRC's
 	uint8_t crc_width = 4;
-	crc_t crc(crc_width);
 	uint32_t calculated_crc;
 
 	/*
@@ -193,7 +120,6 @@ BOOST_AUTO_TEST_CASE(crcFive) {
 
 	// 5 bit CRC's
 	uint8_t crc_width = 5;
-	crc_t crc(crc_width);
 	uint32_t calculated_crc;
 
 	/*
@@ -264,7 +190,6 @@ BOOST_AUTO_TEST_CASE(crcSix) {
 
 	// 6 bit CRC's
 	uint8_t crc_width = 6;
-	crc_t crc(crc_width);
 	uint32_t calculated_crc;
 
 	/*
@@ -324,7 +249,7 @@ BOOST_AUTO_TEST_CASE(crcSix) {
 
 	// ETSI EN 300 751
 	// Test Vector 2 => 0101001100 011101
-	// Reversed: 0011001010 101110
+	// Reversed: 0011001010 101110             0011001010
 	calculated_crc = calculate_crc(crc_width, "0011001010", 0x19, 0x00, 0x00, true, true);
 	BOOST_CHECK(calculated_crc == 0x2E);
 
@@ -362,7 +287,6 @@ BOOST_AUTO_TEST_CASE(crcSeven) {
 
 	// 7 bit CRC's
 	uint8_t crc_width = 7;
-	crc_t crc(crc_width);
 	uint32_t calculated_crc;
 
 	/*
@@ -401,7 +325,6 @@ BOOST_AUTO_TEST_CASE(crcEight) {
 
 	// 8 bit CRC's
 	uint8_t crc_width = 8;
-	crc_t crc(crc_width);
 	uint32_t calculated_crc;
 
 	/*
@@ -412,7 +335,9 @@ BOOST_AUTO_TEST_CASE(crcEight) {
 	BOOST_CHECK(calculated_crc == 0xF4);
 
 	// 'Firmware CRC-8 implementations for SMBus'
+	//uint8_t data_1_1[] = {0x5C};
 	calculated_crc = calculate_crc(crc_width, "01011100", 0x07, 0x0, 0x0, false, false);
+	//calculated_crc = calculate_crc(crc_width, data_1_1, sizeof(data_1_1), 0x07, 0x0, 0x0, false, false);
 	BOOST_CHECK(calculated_crc == 0x93);
 
 	/*
@@ -675,8 +600,6 @@ BOOST_AUTO_TEST_CASE(crcFourteen) {
 	uint8_t crc_width = 14;
 	uint32_t calculated_crc;
 
-	crc_t crc(crc_width);
-
 	/*
 	 * CRC-14/DARC
 	 * width=14 poly=0x0805 init=0x0000 refin=true refout=true xorout=0x0000 check=0x082d name="CRC-14/DARC"
@@ -704,8 +627,6 @@ BOOST_AUTO_TEST_CASE(crcFifteen) {
 	uint8_t crc_width = 15;
 	uint32_t calculated_crc;
 
-	crc_t crc(crc_width);
-
 	/*
 	 * CRC-15
 	 * width=15 poly=0x4599 init=0x0000 refin=false refout=false xorout=0x0000 check=0x059e name="CRC-15" 
@@ -729,8 +650,6 @@ BOOST_AUTO_TEST_CASE(crcSixteen) {
 	// 16 bit CRC's
 	uint8_t crc_width = 16;
 	uint32_t calculated_crc;
-
-	crc_t crc(crc_width);
 
 	/*
 	 * ARC
@@ -792,7 +711,6 @@ BOOST_AUTO_TEST_CASE(crcThirtyTwo) {
 
 	// 32 bit CRC's
 	uint8_t crc_width = 32;
-	crc_t crc(crc_width);
 	uint32_t calculated_crc;
 
 	/*
